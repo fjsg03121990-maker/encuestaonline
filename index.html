@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encuesta de Satisfacción - Curso Antigravity</title>
+  <meta name="description" content="Encuesta de opinión para estudiantes del curso de Antigravity. Evalúa el contenido, satisfacción y aplicabilidad práctica.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Fondo decorativo dinámico -->
+  <div class="ambient-glow glow-1" aria-hidden="true"></div>
+  <div class="ambient-glow glow-2" aria-hidden="true"></div>
+
+  <main class="page-container">
+    <!-- Tarjeta Principal de la Encuesta -->
+    <section class="survey-card" id="surveySection">
+      
+      <!-- Encabezado -->
+      <header class="survey-header">
+        <div class="header-badges">
+          <div class="badge-tag">
+            <span class="pulse-dot"></span>
+            <span>Curso Oficial Antigravity</span>
+          </div>
+          <div class="badge-tag n8n-badge">
+            <span class="n8n-dot"></span>
+            <span>Airtable & Email vía n8n</span>
+          </div>
+        </div>
+        <h1 class="survey-title">Encuesta de Opinión para Estudiantes</h1>
+        <p class="survey-subtitle">
+          Tu experiencia y comentarios nos ayudan a perfeccionar cada sesión. 
+          Por favor responde con sinceridad a las siguientes preguntas.
+        </p>
+        
+        <!-- Barra de Progreso Dinámica -->
+        <div class="progress-wrapper" aria-label="Progreso de la encuesta">
+          <div class="progress-info">
+            <span class="progress-label">Progreso del formulario</span>
+            <span class="progress-percentage" id="progressPercentage">0%</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progressBarContainer">
+            <div class="progress-bar-fill" id="progressBar"></div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Formulario de la Encuesta -->
+      <form id="surveyForm" novalidate>
+        
+        <!-- Pregunta 1: ID Estudiante -->
+        <fieldset class="form-group fieldset-reset" id="group-id_estudiante">
+          <legend class="group-legend">
+            <span class="step-number">1</span>
+            <span class="legend-text">Identificador del Estudiante</span>
+            <span class="required-badge">* Obligatorio</span>
+          </legend>
+          <p class="field-hint">Ingresa tu código de alumno, matrícula o carnet institucional.</p>
+          
+          <div class="input-icon-wrapper">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <input 
+              type="text" 
+              id="id_estudiante" 
+              name="id_estudiante" 
+              class="form-input" 
+              placeholder="Ej: ALUM-2026-943" 
+              required
+              autocomplete="off"
+              aria-describedby="id-error"
+            >
+          </div>
+          <p class="error-message" id="id-error" role="alert"></p>
+        </fieldset>
+
+        <!-- Pregunta 2: Nivel de Satisfacción -->
+        <fieldset class="form-group fieldset-reset" id="group-nivel_satisfaccion">
+          <legend class="group-legend">
+            <span class="step-number">2</span>
+            <span class="legend-text">Nivel General de Satisfacción</span>
+            <span class="required-badge">* Obligatorio</span>
+          </legend>
+          <p class="field-hint">¿Cuál es tu grado de satisfacción general con el desarrollo y aprendizaje en el curso?</p>
+          
+          <div class="scale-options-container" role="radiogroup" aria-labelledby="group-nivel_satisfaccion">
+            <label class="scale-option">
+              <input type="radio" name="nivel_satisfaccion" value="1" required>
+              <div class="scale-box">
+                <span class="scale-score">1</span>
+                <span class="scale-emoji">😞</span>
+                <span class="scale-label">Muy insatisfecho</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="nivel_satisfaccion" value="2">
+              <div class="scale-box">
+                <span class="scale-score">2</span>
+                <span class="scale-emoji">🙁</span>
+                <span class="scale-label">Insatisfecho</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="nivel_satisfaccion" value="3">
+              <div class="scale-box">
+                <span class="scale-score">3</span>
+                <span class="scale-emoji">😐</span>
+                <span class="scale-label">Neutral</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="nivel_satisfaccion" value="4">
+              <div class="scale-box">
+                <span class="scale-score">4</span>
+                <span class="scale-emoji">😊</span>
+                <span class="scale-label">Satisfecho</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="nivel_satisfaccion" value="5">
+              <div class="scale-box">
+                <span class="scale-score">5</span>
+                <span class="scale-emoji">🤩</span>
+                <span class="scale-label">Muy satisfecho</span>
+              </div>
+            </label>
+          </div>
+          
+          <div class="scale-indicators">
+            <span>Escala 1: Muy insatisfecho</span>
+            <span>Escala 5: Muy satisfecho</span>
+          </div>
+          <p class="error-message" id="satisfaccion-error" role="alert"></p>
+        </fieldset>
+
+        <!-- Pregunta 3: Claridad del Contenido -->
+        <fieldset class="form-group fieldset-reset" id="group-claridad_contenido">
+          <legend class="group-legend">
+            <span class="step-number">3</span>
+            <span class="legend-text">Claridad del Contenido</span>
+            <span class="required-badge">* Obligatorio</span>
+          </legend>
+          <p class="field-hint">¿Qué tan claros, estructurados y fáciles de comprender fueron los temas y conceptos explicados?</p>
+          
+          <div class="scale-options-container" role="radiogroup" aria-labelledby="group-claridad_contenido">
+            <label class="scale-option">
+              <input type="radio" name="claridad_contenido" value="1" required>
+              <div class="scale-box">
+                <span class="scale-score">1</span>
+                <span class="scale-emoji">❓</span>
+                <span class="scale-label">Muy poco claro</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="claridad_contenido" value="2">
+              <div class="scale-box">
+                <span class="scale-score">2</span>
+                <span class="scale-emoji">🤔</span>
+                <span class="scale-label">Poco claro</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="claridad_contenido" value="3">
+              <div class="scale-box">
+                <span class="scale-score">3</span>
+                <span class="scale-emoji">📖</span>
+                <span class="scale-label">Aceptable</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="claridad_contenido" value="4">
+              <div class="scale-box">
+                <span class="scale-score">4</span>
+                <span class="scale-emoji">💡</span>
+                <span class="scale-label">Claro</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="claridad_contenido" value="5">
+              <div class="scale-box">
+                <span class="scale-score">5</span>
+                <span class="scale-emoji">✨</span>
+                <span class="scale-label">Muy claro</span>
+              </div>
+            </label>
+          </div>
+          
+          <div class="scale-indicators">
+            <span>Escala 1: Muy poco claro</span>
+            <span>Escala 5: Muy claro</span>
+          </div>
+          <p class="error-message" id="claridad-error" role="alert"></p>
+        </fieldset>
+
+        <!-- Pregunta 4: Aplicabilidad Práctica -->
+        <fieldset class="form-group fieldset-reset" id="group-aplicabilidad_practica">
+          <legend class="group-legend">
+            <span class="step-number">4</span>
+            <span class="legend-text">Aplicabilidad Práctica</span>
+            <span class="required-badge">* Obligatorio</span>
+          </legend>
+          <p class="field-hint">¿Consideras que las herramientas y metodologías de Antigravity son aplicables a tus proyectos reales o trabajo?</p>
+          
+          <div class="scale-options-container" role="radiogroup" aria-labelledby="group-aplicabilidad_practica">
+            <label class="scale-option">
+              <input type="radio" name="aplicabilidad_practica" value="1" required>
+              <div class="scale-box">
+                <span class="scale-score">1</span>
+                <span class="scale-emoji">🚫</span>
+                <span class="scale-label">Nada aplicable</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="aplicabilidad_practica" value="2">
+              <div class="scale-box">
+                <span class="scale-score">2</span>
+                <span class="scale-emoji">⚠️</span>
+                <span class="scale-label">Poco aplicable</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="aplicabilidad_practica" value="3">
+              <div class="scale-box">
+                <span class="scale-score">3</span>
+                <span class="scale-emoji">🛠️</span>
+                <span class="scale-label">Moderadamente</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="aplicabilidad_practica" value="4">
+              <div class="scale-box">
+                <span class="scale-score">4</span>
+                <span class="scale-emoji">🎯</span>
+                <span class="scale-label">Aplicable</span>
+              </div>
+            </label>
+            <label class="scale-option">
+              <input type="radio" name="aplicabilidad_practica" value="5">
+              <div class="scale-box">
+                <span class="scale-score">5</span>
+                <span class="scale-emoji">🚀</span>
+                <span class="scale-label">Muy aplicable</span>
+              </div>
+            </label>
+          </div>
+          
+          <div class="scale-indicators">
+            <span>Escala 1: Nada aplicable</span>
+            <span>Escala 5: Muy aplicable</span>
+          </div>
+          <p class="error-message" id="aplicabilidad-error" role="alert"></p>
+        </fieldset>
+
+        <!-- Pregunta 5: Comentarios Adicionales -->
+        <fieldset class="form-group fieldset-reset" id="group-comentarios_adicionales">
+          <legend class="group-legend">
+            <span class="step-number">5</span>
+            <span class="legend-text">Comentarios Adicionales</span>
+            <span class="optional-badge">Opcional</span>
+          </legend>
+          <p class="field-hint">Cuéntanos qué fue lo que más valoraste, qué podemos mejorar o qué temas adicionales te gustaría aprender.</p>
+          
+          <div class="textarea-wrapper">
+            <textarea 
+              id="comentarios_adicionales" 
+              name="comentarios_adicionales" 
+              class="form-textarea" 
+              rows="4" 
+              maxlength="600"
+              placeholder="Escribe aquí tus sugerencias, observaciones o comentarios sobre el curso..."
+            ></textarea>
+            <div class="char-counter">
+              <span id="charCount">0</span> / 600 caracteres
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Alerta de Error de Envío -->
+        <div id="formAlert" class="form-alert" hidden role="alert"></div>
+
+        <!-- Acciones del Formulario -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="btnSubmit">
+            <span class="btn-spinner" id="btnSpinner" hidden aria-hidden="true"></span>
+            <span id="btnSubmitText">Finalizar y Enviar Encuesta</span>
+            <svg class="btn-icon" id="btnSubmitIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+          <button type="reset" class="btn btn-ghost" id="btnReset">
+            Reiniciar
+          </button>
+        </div>
+      </form>
+      
+      <!-- Panel de Respuestas Guardadas Localmente (Para visualización) -->
+      <footer class="survey-footer">
+        <div class="stored-records-summary">
+          <span id="recordsBadge" class="records-pill">0 respuestas registradas</span>
+          <button type="button" id="btnToggleHistory" class="btn-text-link">Ver registro local</button>
+          <button type="button" id="btnExportJson" class="btn-text-link" style="display: none;">Exportar JSON</button>
+        </div>
+        
+        <div id="historyContainer" class="history-container" hidden>
+          <h3 class="history-title">Registro de Envíos en este Navegador</h3>
+          <div id="historyList" class="history-list"></div>
+        </div>
+      </footer>
+    </section>
+
+    <!-- Pantalla de Confirmación y Éxito -->
+    <section class="success-card" id="successSection" hidden>
+      <div class="success-icon-wrapper">
+        <svg class="success-checkmark" viewBox="0 0 52 52">
+          <circle class="checkmark-circle" cx="26" cy="26" r="24" fill="none"/>
+          <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+      </div>
+      
+      <div class="header-badges success-badges">
+        <div class="badge-tag success-n8n-badge" id="n8nSuccessBadge">
+          <span class="check-dot">✓</span>
+          <span id="n8nSuccessText">Guardado en Airtable y notificado vía n8n</span>
+        </div>
+      </div>
+      
+      <h2 class="success-title">¡Gracias por tu participación!</h2>
+      <p class="success-message">
+        Tus respuestas para el curso de <strong>Antigravity</strong> han sido procesadas exitosamente.
+      </p>
+
+      <!-- Resumen de Respuestas Enviadas -->
+      <div class="summary-box">
+        <h3 class="summary-heading">Resumen de tu respuesta:</h3>
+        
+        <div class="summary-item">
+          <span class="summary-label">Estudiante:</span>
+          <span class="summary-value" id="summaryIdEstudiante">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Nivel de Satisfacción:</span>
+          <span class="summary-value" id="summarySatisfaccion">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Claridad del Contenido:</span>
+          <span class="summary-value" id="summaryClaridad">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Aplicabilidad Práctica:</span>
+          <span class="summary-value" id="summaryAplicabilidad">-</span>
+        </div>
+        <div class="summary-item comments-summary">
+          <span class="summary-label">Comentarios:</span>
+          <p class="summary-comments" id="summaryComentarios">Sin comentarios adicionales</p>
+        </div>
+        <div class="summary-item record-meta-item">
+          <span class="summary-label">Estado de Automatización:</span>
+          <span class="summary-n8n-status" id="summaryN8nStatus">Procesado vía n8n</span>
+        </div>
+      </div>
+
+      <div class="success-actions">
+        <button type="button" class="btn btn-primary" id="btnNewResponse">
+          <span>Realizar Otra Encuesta</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
