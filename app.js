@@ -371,7 +371,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Transición a pantalla de éxito
       surveySection.hidden = true;
+      surveySection.style.display = 'none';
       successSection.hidden = false;
+      successSection.style.display = 'flex';
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } catch (error) {
@@ -404,16 +406,40 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /**
-   * Botón para nueva encuesta
+   * Botón para nueva encuesta (Oculta resumen y muestra formulario)
    */
   btnNewResponse.addEventListener('click', () => {
+    // 1. Resetear campos del formulario
     surveyForm.reset();
     charCount.textContent = '0';
-    formAlert.hidden = true;
-    formAlert.textContent = '';
+    if (formAlert) {
+      formAlert.hidden = true;
+      formAlert.textContent = '';
+    }
+
+    // 2. Limpiar selecciones de radios y mensajes de error
+    const checkedRadios = surveyForm.querySelectorAll('input[type="radio"]:checked');
+    checkedRadios.forEach(radio => {
+      radio.checked = false;
+    });
+
+    ['id_estudiante', 'nivel_satisfaccion', 'claridad_contenido', 'aplicabilidad_practica'].forEach(name => {
+      let errId = 'id-error';
+      if (name === 'nivel_satisfaccion') errId = 'satisfaccion-error';
+      if (name === 'claridad_contenido') errId = 'claridad-error';
+      if (name === 'aplicabilidad_practica') errId = 'aplicabilidad-error';
+      clearFieldError(name, errId);
+    });
+
     updateProgress();
+
+    // 3. Ocultar sección de confirmación/resumen y mostrar formulario principal
     successSection.hidden = true;
+    successSection.style.display = 'none';
     surveySection.hidden = false;
+    surveySection.style.display = 'block';
+
+    // 4. Desplazar hacia arriba
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 

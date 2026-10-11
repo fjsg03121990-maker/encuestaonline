@@ -50,6 +50,11 @@
   padding: 0;
 }
 
+/* Forzar que cualquier elemento con atributo hidden permanezca oculto */
+[hidden] {
+  display: none !important;
+}
+
 body {
   font-family: var(--font-body);
   background-color: var(--bg-primary);
@@ -718,9 +723,12 @@ body {
 /* Pantalla de Éxito / Confirmación */
 .success-card {
   text-align: center;
-  display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.success-card:not([hidden]) {
+  display: flex;
 }
 
 .success-icon-wrapper {
