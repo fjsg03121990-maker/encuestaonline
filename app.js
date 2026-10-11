@@ -3,8 +3,8 @@
  * CLIENTE SEGURO - ENCUESTA DE SATISFACCIÓN ANTIGRAVITY
  * ============================================================================
  * - Sin credenciales, tokens ni URLs de webhooks en el cliente (100% blindado)
- * - Comunicación exclusiva con el backend seguro a través de '/api/submit'
- * - Validación reactiva, cálculo de progreso y experiencia de usuario fluida
+ * - Comunicación con el backend a través de '/api/submit'
+ * - Manejo robusto de estados visuales (carga, éxito, alerta y reinicio)
  * ============================================================================
  */
 
@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const summaryClaridad = document.getElementById('summaryClaridad');
   const summaryAplicabilidad = document.getElementById('summaryAplicabilidad');
   const summaryComentarios = document.getElementById('summaryComentarios');
-  const summaryRecordId = document.getElementById('summaryRecordId');
   const summaryN8nStatus = document.getElementById('summaryN8nStatus');
   const n8nSuccessText = document.getElementById('n8nSuccessText');
 
@@ -80,7 +79,76 @@ document.addEventListener('DOMContentLoaded', () => {
   const STORAGE_KEY = 'antigravity_survey_responses';
 
   /**
-   * Obtiene respuestas respaldadas en localStorage
+   * Control de Visibilidad de Pantallas
+   */
+  const showSurveyScreen = () => {
+    successSection.style.display = 'none';
+    successSection.classList.remove('is-active');
+    successSection.hidden = true;
+
+    surveySection.style.display = 'block';
+    surveySection.classList.remove('is-hidden');
+    surveySection.hidden = false;
+  };
+
+  const showSuccessScreen = () => {
+    surveySection.style.display = 'none';
+    surveySection.classList.add('is-hidden');
+    surveySection.hidden = true;
+
+    successSection.style.display = 'flex';
+    successSection.classList.add('is-active');
+    successSection.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  /**
+   * Control de la Alerta de Error
+   */
+  const hideAlert = () => {
+    if (formAlert) {
+      formAlert.style.display = 'none';
+      formAlert.classList.remove('is-visible');
+      formAlert.hidden = true;
+      formAlert.textContent = '';
+    }
+  };
+
+  const showAlert = (message) => {
+    if (formAlert) {
+      formAlert.textContent = message;
+      formAlert.style.display = 'flex';
+      formAlert.classList.add('is-visible');
+      formAlert.hidden = false;
+      formAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  };
+
+  /**
+   * Estado visual del botón durante el envío
+   */
+  const setSubmittingState = (isSubmitting, statusText = 'Finalizar y Enviar Encuesta') => {
+    btnSubmit.disabled = isSubmitting;
+    btnReset.disabled = isSubmitting;
+
+    if (isSubmitting) {
+      btnSubmit.classList.add('is-loading');
+      btnSpinner.style.display = 'inline-block';
+      btnSpinner.hidden = false;
+      btnSubmitIcon.style.display = 'none';
+      btnSubmitText.textContent = statusText;
+      hideAlert();
+    } else {
+      btnSubmit.classList.remove('is-loading');
+      btnSpinner.style.display = 'none';
+      btnSpinner.hidden = true;
+      btnSubmitIcon.style.display = 'inline-block';
+      btnSubmitText.textContent = 'Finalizar y Enviar Encuesta';
+    }
+  };
+
+  /**
+   * Historial en LocalStorage
    */
   const getStoredResponses = () => {
     try {
@@ -91,9 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  /**
-   * Guarda una nueva respuesta en localStorage como historial de usuario
-   */
   const saveResponse = (responseData) => {
     const list = getStoredResponses();
     list.unshift(responseData);
@@ -103,9 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHistoryUI();
   };
 
-  /**
-   * Actualiza el badge de respuestas y la lista histórica
-   */
   const updateHistoryUI = () => {
     const list = getStoredResponses();
     const count = list.length;
@@ -126,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="history-item">
         <div>
           <span class="history-id">${escapeHtml(item.id_estudiante)}</span>
-          ${item.airtable_id ? `<span style="font-size: 0.72rem; color: #818cf8; margin-left: 0.4rem;">[Airtable: ${escapeHtml(item.airtable_id)}]</span>` : ''}
           <div style="font-size: 0.72rem; color: var(--text-dim);">
             ${new Date(item.fecha_registro).toLocaleDateString()} ${new Date(item.fecha_registro).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
@@ -141,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   /**
-   * Calcula y actualiza la barra de progreso reactiva
+   * Progreso reactivo
    */
   const updateProgress = () => {
     const totalRequired = 4;
@@ -177,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   idEstudianteInput.addEventListener('input', () => {
     clearFieldError('id_estudiante', 'id-error');
-    if (formAlert) formAlert.hidden = true;
+    hideAlert();
     updateProgress();
   });
 
@@ -191,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (groupName === 'aplicabilidad_practica') errorId = 'aplicabilidad-error';
 
       clearFieldError(groupName, errorId);
-      if (formAlert) formAlert.hidden = true;
+      hideAlert();
       updateProgress();
     });
   });
@@ -275,26 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Estado visual del botón durante el envío
-   */
-  const setSubmittingState = (isSubmitting, statusText = 'Finalizar y Enviar Encuesta') => {
-    btnSubmit.disabled = isSubmitting;
-    btnReset.disabled = isSubmitting;
-    if (isSubmitting) {
-      btnSpinner.hidden = false;
-      btnSubmitIcon.hidden = true;
-      btnSubmitText.textContent = statusText;
-      formAlert.hidden = true;
-      formAlert.textContent = '';
-    } else {
-      btnSpinner.hidden = true;
-      btnSubmitIcon.hidden = false;
-      btnSubmitText.textContent = 'Finalizar y Enviar Encuesta';
-    }
-  };
-
-  /**
-   * Procesamiento y Envío a través del Backend Seguro
+   * Envío del Formulario
    */
   surveyForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -303,14 +345,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    formAlert.hidden = true;
-    formAlert.textContent = '';
+    hideAlert();
 
-    // Detección de protocolo file:// (guía al usuario si no inició el backend)
+    // Detección de protocolo file:// (guía al usuario si abrió directamente en local sin servidor)
     if (window.location.protocol === 'file:') {
-      formAlert.textContent = '⚠️ Estás ejecutando el archivo directamente con protocolo "file://". Para procesar los envíos de forma segura con Airtable y n8n sin exponer credenciales, inicia el servidor ejecutando "npm start" y abre http://localhost:3000.';
-      formAlert.hidden = false;
-      formAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      showAlert('⚠️ Estás abriendo el archivo con "file://". Para enviar datos con n8n de forma segura, inicia el servidor con "npm start" y abre http://localhost:3000.');
       return;
     }
 
@@ -322,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
       comentarios_adicionales: comentariosInput.value.trim()
     };
 
-    setSubmittingState(true, 'Procesando en servidor seguro...');
+    setSubmittingState(true, 'Enviando respuestas...');
 
     try {
       const response = await fetch(API_ENDPOINT, {
@@ -343,7 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // Registro exitoso
       const finalRecord = {
         ...formData,
-        airtable_id: result.airtableId,
         fecha_registro: result.data?.fecha_registro || new Date().toISOString()
       };
 
@@ -356,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
       summaryAplicabilidad.textContent = scaleLabels.aplicabilidad_practica[finalRecord.aplicabilidad_practica];
 
       if (summaryN8nStatus) {
-        summaryN8nStatus.textContent = '✓ Enviado a n8n';
+        summaryN8nStatus.textContent = '✓ Procesado vía n8n';
       }
 
       if (n8nSuccessText) {
@@ -369,31 +407,24 @@ document.addEventListener('DOMContentLoaded', () => {
         summaryComentarios.textContent = 'Sin comentarios adicionales.';
       }
 
-      // Transición a pantalla de éxito
-      surveySection.hidden = true;
-      surveySection.style.display = 'none';
-      successSection.hidden = false;
-      successSection.style.display = 'flex';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Mostrar pantalla de éxito y ocultar formulario
+      showSuccessScreen();
 
     } catch (error) {
       console.error('[Error de Envío]:', error);
-      formAlert.textContent = `⚠️ ${error.message}`;
-      formAlert.hidden = false;
-      formAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      showAlert(`⚠️ ${error.message}`);
     } finally {
       setSubmittingState(false);
     }
   });
 
   /**
-   * Botón de reiniciar
+   * Botón de reiniciar formulario
    */
   btnReset.addEventListener('click', () => {
     setTimeout(() => {
       charCount.textContent = '0';
-      formAlert.hidden = true;
-      formAlert.textContent = '';
+      hideAlert();
       ['id_estudiante', 'nivel_satisfaccion', 'claridad_contenido', 'aplicabilidad_practica'].forEach(name => {
         let errId = 'id-error';
         if (name === 'nivel_satisfaccion') errId = 'satisfaccion-error';
@@ -409,15 +440,10 @@ document.addEventListener('DOMContentLoaded', () => {
    * Botón para nueva encuesta (Oculta resumen y muestra formulario)
    */
   btnNewResponse.addEventListener('click', () => {
-    // 1. Resetear campos del formulario
     surveyForm.reset();
     charCount.textContent = '0';
-    if (formAlert) {
-      formAlert.hidden = true;
-      formAlert.textContent = '';
-    }
+    hideAlert();
 
-    // 2. Limpiar selecciones de radios y mensajes de error
     const checkedRadios = surveyForm.querySelectorAll('input[type="radio"]:checked');
     checkedRadios.forEach(radio => {
       radio.checked = false;
@@ -432,14 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateProgress();
-
-    // 3. Ocultar sección de confirmación/resumen y mostrar formulario principal
-    successSection.hidden = true;
-    successSection.style.display = 'none';
-    surveySection.hidden = false;
-    surveySection.style.display = 'block';
-
-    // 4. Desplazar hacia arriba
+    showSurveyScreen();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
@@ -447,9 +466,16 @@ document.addEventListener('DOMContentLoaded', () => {
    * Alternar vista del registro local
    */
   btnToggleHistory.addEventListener('click', () => {
-    const isHidden = historyContainer.hidden;
-    historyContainer.hidden = !isHidden;
-    btnToggleHistory.textContent = isHidden ? 'Ocultar registro local' : 'Ver registro local';
+    const isClosed = historyContainer.style.display === 'none' || historyContainer.hidden;
+    if (isClosed) {
+      historyContainer.style.display = 'block';
+      historyContainer.hidden = false;
+      btnToggleHistory.textContent = 'Ocultar registro local';
+    } else {
+      historyContainer.style.display = 'none';
+      historyContainer.hidden = true;
+      btnToggleHistory.textContent = 'Ver registro local';
+    }
   });
 
   /**
@@ -475,6 +501,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return div.innerHTML;
   }
 
+  // Inicialización limpia al cargar la página
+  showSurveyScreen();
+  hideAlert();
+  setSubmittingState(false);
   updateProgress();
   updateHistoryUI();
 });

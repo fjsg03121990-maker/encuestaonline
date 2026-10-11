@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Estilos -->
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=1.1">
 </head>
 <body>
   <!-- Fondo decorativo dinámico -->
@@ -286,12 +286,12 @@
         </fieldset>
 
         <!-- Alerta de Error de Envío -->
-        <div id="formAlert" class="form-alert" hidden role="alert"></div>
+        <div id="formAlert" class="form-alert" role="alert" style="display: none;"></div>
 
         <!-- Acciones del Formulario -->
         <div class="form-actions">
           <button type="submit" class="btn btn-primary" id="btnSubmit">
-            <span class="btn-spinner" id="btnSpinner" hidden aria-hidden="true"></span>
+            <span class="btn-spinner" id="btnSpinner" style="display: none;" aria-hidden="true"></span>
             <span id="btnSubmitText">Finalizar y Enviar Encuesta</span>
             <svg class="btn-icon" id="btnSubmitIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -312,7 +312,7 @@
           <button type="button" id="btnExportJson" class="btn-text-link" style="display: none;">Exportar JSON</button>
         </div>
         
-        <div id="historyContainer" class="history-container" hidden>
+        <div id="historyContainer" class="history-container" style="display: none;">
           <h3 class="history-title">Registro de Envíos en este Navegador</h3>
           <div id="historyList" class="history-list"></div>
         </div>
@@ -320,7 +320,7 @@
     </section>
 
     <!-- Pantalla de Confirmación y Éxito -->
-    <section class="success-card" id="successSection" hidden>
+    <section class="success-card" id="successSection" style="display: none;">
       <div class="success-icon-wrapper">
         <svg class="success-checkmark" viewBox="0 0 52 52">
           <circle class="checkmark-circle" cx="26" cy="26" r="24" fill="none"/>
@@ -378,6 +378,6 @@
     </section>
   </main>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=1.1"></script>
 </body>
 </html>
