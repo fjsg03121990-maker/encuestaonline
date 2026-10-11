@@ -344,17 +344,17 @@ server.on('error', (err) => {
     currentPort++;
     console.warn(`⚠️ Puerto ${currentPort - 1} ocupado. Reintentando en puerto ${currentPort}...`);
     setTimeout(() => {
-      server.listen(currentPort);
+      server.listen(currentPort, '0.0.0.0');
     }, 200);
   } else {
     console.error('Error crítico del servidor:', err);
   }
 });
 
-server.listen(currentPort, () => {
+server.listen(currentPort, '0.0.0.0', () => {
   console.log(`====================================================`);
   console.log(`🚀 Servidor Seguro de Encuesta Activo`);
-  console.log(`📍 URL Local: http://localhost:${currentPort}`);
+  console.log(`📍 Escuchando en: http://0.0.0.0:${currentPort}`);
   console.log(`🔒 Arquitectura: Webhook n8n (Airtable + Email)`);
   console.log(`====================================================`);
 });
